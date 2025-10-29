@@ -1,0 +1,26 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Hod kostkou</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <h2>Vyber kostku</h2>
+
+  <ion-segment [(ngModel)]="dice" value="6">
+    <ion-segment-button [value]="6"><ion-label>D6</ion-label></ion-segment-button>
+    <ion-segment-button [value]="10"><ion-label>D10</ion-label></ion-segment-button>
+    <ion-segment-button [value]="20"><ion-label>D20</ion-label></ion-segment-button>
+  </ion-segment>
+
+  <ion-card class="ion-margin-top">
+    <ion-card-header>
+      <ion-card-title>Výsledek</ion-card-title>
+    </ion-card-header>
+    <ion-card-content style="font-size:48px; text-align:center;">
+      {{ last ?? '—' }}
+    </ion-card-content>
+  </ion-card>
+
+  <ion-button expand="block" (click)="manualRoll()">Hodit teď</ion-button>
+</ion-content>

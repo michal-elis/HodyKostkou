@@ -1,0 +1,7 @@
+{
+  "name": "tempHodKostkou",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}
