@@ -1,0 +1,14 @@
+/* Nastaví pozadí celého segmentu, aby ladilo s tmavým pozadím */
+ion-segment {
+  --background: var(--ion-item-background); 
+}
+
+/* Nastaví barvu NEAKTIVNÍCH tlačítek (šedá, aby byla vidět) */
+ion-segment-button {
+  --color: #808080;
+}
+
+/* Nastaví barvu AKTIVNÍHO (vybraného) tlačítka (bílá) */
+ion-segment-button.segment-button-checked {
+  --color: #ffffff;
+}
