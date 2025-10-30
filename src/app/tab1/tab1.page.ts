@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';              // ← pro [(ngModel)]
 import { RouterLink } from '@angular/router';
+import { RandomOrg } from '../services/random-org';
 import {
   IonHeader,
   IonToolbar,
@@ -14,15 +15,14 @@ import {
   IonCard,
   IonCardHeader,
   IonCardTitle,
-  IonCardContent
-} from '@ionic/angular/standalone';
+  IonCardContent, IonSpinner } from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-tab1',
   standalone: true,
   templateUrl: 'tab1.page.html',
   styleUrls: ['tab1.page.scss'],
-  imports: [
+  imports: [IonSpinner, 
     CommonModule,
     FormsModule,                   // ← přidáno
     RouterLink,
@@ -30,14 +30,28 @@ import {
     IonButton,
     IonSegment, IonSegmentButton, IonLabel,
     IonCard, IonCardHeader, IonCardTitle, IonCardContent
+
   ],
 })
 export class Tab1Page {
-  dice = 6;            // aktuálně zvolená kostka (D6)
-  last: number | null = null;  // poslední hod
+  dice: number = 6;            // aktuálně zvolená kostka (D6)
+  vysledek: number | null = null;  // poslední hod
+  cekame: boolean = false;
+  constructor (private randomOrg:RandomOrg){}
 
-  manualRoll() {
-    const min = 1, max = this.dice;
-    this.last = Math.floor(Math.random() * (max - min + 1)) + min;
-  }
+hod(){
+  this.cekame = true;
+  this.vysledek = null;
+
+  this.randomOrg.getHod(this.dice).subscribe({
+    next: (res:any)=>{
+      this.vysledek = res.result.random.data[0];
+      this.cekame=false;
+    },
+    error: (err)=> {
+      console.error('Chyba api', err);
+      this.cekame = false;
+    }
+  });
+}
 }
