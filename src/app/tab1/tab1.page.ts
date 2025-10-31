@@ -1,8 +1,17 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';              // ← pro [(ngModel)]
+import { FormsModule } from '@angular/forms';           
 import { RouterLink } from '@angular/router';
 import { RandomOrg } from '../services/random-org';
+
+
+
+//import { Proximity } from '@anuradev/capacitor-proximity';
+
+// Importujeme také typ pro "Listener"
+import { PluginListenerHandle } from '@capacitor/core';
+
+
 import {
   IonHeader,
   IonToolbar,
@@ -15,7 +24,11 @@ import {
   IonCard,
   IonCardHeader,
   IonCardTitle,
-  IonCardContent, IonSpinner } from '@ionic/angular/standalone';
+  IonCardContent, 
+  IonSpinner } from '@ionic/angular/standalone';
+
+ import { Subscription, throttleTime } from 'rxjs';
+import { ProximityService } from '../services/proximity.service';
 
 @Component({
   selector: 'app-tab1',
@@ -24,20 +37,38 @@ import {
   styleUrls: ['tab1.page.scss'],
   imports: [IonSpinner, 
     CommonModule,
-    FormsModule,                   // ← přidáno
+    FormsModule,                 
     RouterLink,
     IonHeader, IonToolbar, IonTitle, IonContent,
     IonButton,
     IonSegment, IonSegmentButton, IonLabel,
-    IonCard, IonCardHeader, IonCardTitle, IonCardContent
+    IonCard, IonCardHeader, IonCardTitle, IonCardContent, FormsModule
 
   ],
 })
 export class Tab1Page {
-  dice: number = 6;            // aktuálně zvolená kostka (D6)
+  dice: number = 6;            // aktuálně zvolená kostka  D šestka je výchozí, protože je jako první
   vysledek: number | null = null;  // poslední hod
   cekame: boolean = false;
-  constructor (private randomOrg:RandomOrg){}
+ private proxSub?: Subscription;
+  private proximityListener: PluginListenerHandle | null = null;
+
+  constructor (private randomOrg:RandomOrg, private prox: ProximityService){}
+ 
+
+    ngOnInit() {
+    // Spustí hod při zakrytí proximity senzoru (near = true)
+    this.proxSub = this.prox
+      .watch()
+      .pipe(throttleTime(800, undefined, { leading: true, trailing: false }))
+      .subscribe((near) => {
+        if (near) this.hod();
+      });
+    }
+
+  ngOnDestroy() {
+    this.proxSub?.unsubscribe();
+  }
 
 hod(){
   this.cekame = true;
